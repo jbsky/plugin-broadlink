@@ -1097,6 +1097,9 @@ class lb1(device):
         if bulb_colormode is not None:
             data["bulb_colormode"] = bulb_colormode
         js = json.dumps(data).encode("utf8")
+        import logging
+        logging.debug("set_state : " + str(js))
+
         packet = self._encode(2, js)
         response = self.send_packet(0x6A, packet)
         check_error(response[0x22:0x24])

@@ -517,6 +517,9 @@ class broadlinkCmd extends cmd {
 		$data = array();
 		$eqLogic = $this->getEqLogic();
 		$values = explode(',', $this->getConfiguration('logicalid'));
+		log::add('broadlink', 'debug', 'values : ' .implode (",",  $values));
+		log::add('broadlink', 'debug', 'option : ' .implode (",", $_options));
+		log::add('broadlink', 'debug', 'subtype : ' .$this->getSubType());
 		foreach ($values as $value) {
 			$value = explode(':', $value);
 			if (count($value) == 2) {
@@ -531,6 +534,32 @@ class broadlinkCmd extends cmd {
 						$finalValue = trim($value[1]);
 				}
 				$data[trim($value[0])] = $finalValue;
+			}
+			if (count($value) == 1) {
+				log::add('broadlink', 'debug', 'count($value) == 1 => value =>'. implode (",",$value));
+				switch ($this->getSubType()) {
+					case 'color':
+						if (implode (",",  $values) == "rgb")
+							$r=implode (",", $_options);
+							$rgb=substr(ltrim($r, $r[0]),0,6);
+							log::add('broadlink', 'debug', 'rgb : ' .$rgb);
+							$data['red']   = hexdec (substr($rgb,0,2));
+							$data['green'] = hexdec (substr($rgb,2,2));
+							$data['blue']  = hexdec (substr($rgb,4,2));
+						break;
+					case 'slider':
+						$data[implode (",",  $values)] = intval(ltrim(implode (",", $_options),','));
+						break;
+					default:
+						if (implode (",",  $values) == "on")
+							$data['pwr'] = 1;
+						if (implode (",",  $values) == "off")
+							$data['pwr'] = 0;
+						if (implode (",",  $values) == "bulbcolor_on")
+							$data['bulb_colormode'] = 1;
+						if (implode (",",  $values) == "bulbcolor_off")
+							$data['bulb_colormode'] = 0;							
+				}
 			}
 		}
 		$data['ip'] = $eqLogic->getConfiguration('ip');
@@ -547,8 +576,10 @@ class broadlinkCmd extends cmd {
 			$value = json_encode(array('apikey' => jeedom::getApiKey('broadlink'), 'cmd' => 'send', 'cmdType' => 'command', 'mac' => $eqLogic->getLogicalId(), 'device' => $data));
 		}
 		$socket = socket_create(AF_INET, SOCK_STREAM, 0);
+		log::add('broadlink', 'info', 'socket_connect');
 		socket_connect($socket, '127.0.0.1', config::byKey('socketport', 'broadlink'));
 		socket_write($socket, $value, strlen($value));
 		socket_close($socket);
+		log::add('broadlink', 'debug', 'socket_close($socket);');
 	}
 }

@@ -2,6 +2,7 @@
 from broadlink import broadlink
 import logging
 import time
+# logging.basicConfig(filename='broadlink.log', encoding='utf-8', level=logging.DEBUG)
 
 def read_lb1(device):
 	result ={}
@@ -14,36 +15,80 @@ def read_lb1(device):
 	product.auth()
 	logging.debug("Connected to Broadlink device with name " + name + "....")
 	result['mac']=mac
-	data = product.get_state()
-	logging.debug(str(data))
+	data = product.set_state(pwr=1)
 
-	for x in data:
-		if data[x]:
-			result[x]=1
-		else:
-			result[x]=0
-	logging.debug(str(result))
-	return result
+	data = product.get_state()
+	logging.debug("data:" + str(data))
+
+	return str(data)
 
 def send_lb1(device):
+	logging.debug("send_lb1(device)")
+	# {"apikey":"g9BhkrBgb75uATyhHdHruDJY7xLLDwLj","cmd":"send","cmdType":"command","mac":"a043b0b24bd3","device":{"pwr":"1","ip":"192.168.4.201","port":"80","type":"lb1","name":"Salon","mac":"a043b0b24bd3"}}'
+	pwr=None
+	red=None
+	blue=None
+	green=None
+	brightness=None
+	colortemp=None
+	hue=None
+	transitionduration=None
+	saturation=None
+	maxworktime=None
+	bulb_colormode=None
 	result ={}
 	state = True
 	host = device['ip']
 	port = device['port']
 	mac = device['mac']
 	name = device['name']
-	sid = device['sid']
-	wantedstate = device['state']
-	if int(wantedstate) == 0:
-		state = False
+	if 'pwr' in device:
+		pwr=device['pwr']
+	if 'red' in device:
+		red=device['red']
+	if 'blue' in device:
+		blue=device['blue']
+	if 'green' in device:
+		green=device['green']
+	if 'brightness' in device:
+		brightness=device['brightness']
+	if 'colortemp' in device:
+		colortemp=device['colortemp']
+	if 'hue' in device:
+		hue=device['hue']
+	if 'transitionduration' in device:
+		transitionduration=device['transitionduration']
+	if 'saturation' in device:
+		saturation=device['saturation']
+	if 'maxworktime' in device:
+		maxworktime=device['maxworktime']
+	if 'bulb_colormode' in device:
+		bulb_colormode=device['bulb_colormode']
+
+
 	product = broadlink.gendevice(0x60c8,host=(host,int(port)), mac=bytearray.fromhex(mac))
 	logging.debug("Connecting to Broadlink device with name " + name + "....")
 	product.auth()
 	logging.debug("Connected to Broadlink device with name " + name + "....")
-	data = product.set_state(pwr=state)
+	# logging.debug("pwr=device['pwr'] = " + str(pwr))
+
+	result = product.set_state(
+		pwr=pwr,
+		red=red,
+		blue=blue,
+		green=green,
+		brightness=brightness,
+		colortemp=colortemp,
+		hue=hue,
+		transitionduration=transitionduration,
+		saturation=saturation,
+		maxworktime=maxworktime,
+		bulb_colormode=bulb_colormode
+)
 
 	time.sleep(0.1)
-	result = read_lb1(device)
-	logging.debug(str(result))
+	# result = read_lb1(device)
+	# logging.debug("result" + str(result))
+	return str(result)
 
-	return result
+	# return result

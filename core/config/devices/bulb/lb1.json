@@ -3,65 +3,119 @@
         "name": "SmartBulb",
 		"groupe" : "Lumière",
 		"category" : {
-			"automatism" : 1
+			"light" : 1
 		},
 		"configuration" : {
 			"device" : "lb1",
 			"delay" : 300,
-			"canlearn" : 1,
+			"canlearn" : 0,
 			"ischild" :0
 		},
         "commands": [
 			{
-				"name": "Etat",
+				"name": "Status",
 				"type": "info",
 				"subtype": "binary",
-				"isVisible": 0,
+				"isVisible": 1,
 				"isHistorized": 0,
-				"unite": "",
 				"display": {
-					"generic_type": "ENERGY_STATE"
-				},
-				"logicalId": "s1",
-				"configuration" : {
-					"logicalid" : "s1"
-				}
+					"generic_type": "LIGHT_STATE"
+                },
+
+				"logicalId": "status"
+			},
+            {
+                "name": "Allumer",
+                "type": "action",
+                "subtype": "other",
+                "display": {
+					"icon": "<i class=\"fas fa-lightbulb\"><\/i>",
+					"generic_type": "LIGHT_ON"
+                },
+                "configuration" : {
+        			"request" : "status",
+                    "value": 1
+                },
+                "isVisible": 1,
+                "value": "status",
+                "logicalId": "on"
+            },
+            {
+                "name": "Eteindre",
+                "type": "action",
+                "subtype": "other",
+                "display": {
+					"icon": "<i class=\"fas fa-power-off\"><\/i>",
+					"generic_type": "LIGHT_OFF"
+                },
+                "configuration" : {
+        			"request" : "status",
+                    "value": 0
+                },
+                "isVisible": 1,
+                "value": "status",
+                "logicalId": "off"
 			},
 			{
-				"name": "On",
-				"type": "action",
-				"subtype": "other",
-				"isVisible": 1,
-				"value": "Etat",
-				"display": {
-					"generic_type": "ENERGY_ON"
-				},
-				"logicalId": "state:1",
-				"configuration" : {
-					"logicalid" : "state:1"
-				},
-				"template": {
-					"dashboard": "prise",
-					"mobile": "prise"
-				}
+                "name": "Définir couleur RGB",
+                "type": "action",
+                "subtype": "color",
+                "display": {
+					"generic_type": "LIGHT_SET_COLOR"
+                },
+                "configuration" : {
+        			"request" : "rgb"
+        		},
+                "value": "Couleur RGB",
+                "isVisible": 1,
+                "logicalId": "rgb"
 			},
 			{
-				"name": "Off",
-				"type": "action",
-				"subtype": "other",
-				"isVisible": 1,
-				"value": "Etat",
-				"display": {
-					"generic_type": "ENERGY_ON"
-				},
-				"logicalId": "state:0",
-				"configuration" : {
-					"logicalid" : "state:0"
-				},
-				"template": {
-					"dashboard": "prise",
-					"mobile": "prise"
-				}
+                "name": "Luminosité",
+                "type": "action",
+                "subtype": "slider",
+                "display": {
+					"generic_type": "LIGHT_SLIDER",
+					"forceReturnLineBefore": 1
+                },
+                "configuration" : {
+        			"request" : "brightness",
+                    "minValue" : 0,
+                    "maxValue" : 100
+        		},
+                "value": "Luminosité Info",
+                "isVisible": 1,
+                "logicalId": "brightness"
+			},
+			{
+                "name": "Saturation",
+                "type": "action",
+                "subtype": "slider",
+                "display": {
+					"generic_type": "LIGHT_SLIDER",
+					"forceReturnLineBefore": 1
+                },
+                "configuration" : {
+        			"request" : "saturation",
+                    "minValue" : 0,
+                    "maxValue" : 100
+        		},
+                "value": "Luminosité Info",
+                "isVisible": 1,
+                "logicalId": "saturation"
+			},
+            {
+                "name": "Mode",
+                "type": "action",
+                "subtype": "slider",
+                "configuration" : {
+                    "request" : "bulb_colormode",
+                    "minValue" : 0,
+                    "maxValue" : 2
+        		},
+                "isVisible": 1,
+                "value": "Luminosité Info",
+                "logicalId": "bulb_colormode"
 			},
 			 {
                 "name": "Rafraîchir",

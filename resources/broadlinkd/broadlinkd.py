@@ -30,7 +30,7 @@ import argparse
 import traceback
 from os.path import join
 import json
-from broadlink import broadlink,rm2,a1,mp1,sp2,rm4
+from broadlink import broadlink,rm2,a1,mp1,sp2,rm4,lb1
 import globals
 
 try:
@@ -57,8 +57,9 @@ def read_socket():
 	try:
 		global JEEDOM_SOCKET_MESSAGE
 		if not JEEDOM_SOCKET_MESSAGE.empty():
-			logging.debug("Message received in socket JEEDOM_SOCKET_MESSAGE")
+			logging.debug("Message received in socket JEEDOM_SOCKET_MESSAGE : " )
 			message = JEEDOM_SOCKET_MESSAGE.get().decode('utf-8')
+			logging.debug("Message : " + str(message))
 			message =json.loads(message)
 			if message['apikey'] != _apikey:
 				logging.error("Invalid apikey from socket : " + str(message))
@@ -92,7 +93,7 @@ def read_socket():
 					logging.debug('Send command')
 					send_broadlink(message)
 	except Exception as e:
-		logging.error(str(e))
+		logging.error("Exception" + str(e))
 # ----------------------------------------------------------------------------
 def read_broadlink():
 	now = datetime.datetime.utcnow()
@@ -139,6 +140,9 @@ def read_broadlink():
 # ----------------------------------------------------------------------------
 
 def send_broadlink(message):
+	logging.debug('send_broadlink(message) :' + str(message))
+# [2021-01-20 20:44:25.191][DEBUG] : Message read from socket: b'{"apikey":"g9BhkrBgb75uATyhHdHruDJY7xLLDwLj","cmd":"send","cmdType":"command","mac":"a043b0b24bd3","device":{"ip":"192.168.4.201","port":"80","type":"lb1","name":"Salon","mac":"a043b0b24bd3"}}'
+
 	result = {}
 	if message['cmdType'] == 'refresh':
 		if message['device']['type'] == 'rm2':
