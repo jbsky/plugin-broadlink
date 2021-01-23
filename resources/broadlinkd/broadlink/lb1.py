@@ -2,6 +2,8 @@
 from broadlink import broadlink
 import logging
 import time
+import json
+
 # logging.basicConfig(filename='broadlink.log', encoding='utf-8', level=logging.DEBUG)
 
 def read_lb1(device):
@@ -11,16 +13,12 @@ def read_lb1(device):
 	mac = device['mac']
 	name = device['name']
 	product = broadlink.gendevice(0x60c8,host=(host,int(port)), mac=bytearray.fromhex(mac))
-	logging.debug("Connecting to Broadlink device with name " + name + "....")
+	logging.debug("[PY]Connecting to Broadlink device with name " + name + "....")
 	product.auth()
-	logging.debug("Connected to Broadlink device with name " + name + "....")
-	result['mac']=mac
-	data = product.set_state(pwr=1)
-
+	logging.debug("[PY]Connected to Broadlink device with name " + name + "....")
 	data = product.get_state()
-	logging.debug("data:" + str(data))
-
-	return str(data)
+	data["mac"]=device['mac']
+	return data
 
 def send_lb1(device):
 	logging.debug("send_lb1(device)")
@@ -67,10 +65,9 @@ def send_lb1(device):
 
 
 	product = broadlink.gendevice(0x60c8,host=(host,int(port)), mac=bytearray.fromhex(mac))
-	logging.debug("Connecting to Broadlink device with name " + name + "....")
+	logging.debug("[PY]Connecting to Broadlink device with name " + name + "....")
 	product.auth()
-	logging.debug("Connected to Broadlink device with name " + name + "....")
-	# logging.debug("pwr=device['pwr'] = " + str(pwr))
+	logging.debug("[PY]Connected to Broadlink device with name " + name + "....")
 
 	result = product.set_state(
 		pwr=pwr,
@@ -85,10 +82,7 @@ def send_lb1(device):
 		maxworktime=maxworktime,
 		bulb_colormode=bulb_colormode
 )
-
+	result["mac"]=mac
 	time.sleep(0.1)
-	# result = read_lb1(device)
-	# logging.debug("result" + str(result))
-	return str(result)
 
-	# return result
+	return result

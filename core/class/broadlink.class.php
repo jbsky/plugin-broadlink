@@ -517,9 +517,9 @@ class broadlinkCmd extends cmd {
 		$data = array();
 		$eqLogic = $this->getEqLogic();
 		$values = explode(',', $this->getConfiguration('logicalid'));
-		log::add('broadlink', 'debug', 'values : ' .implode (",",  $values));
-		log::add('broadlink', 'debug', 'option : ' .implode (",", $_options));
-		log::add('broadlink', 'debug', 'subtype : ' .$this->getSubType());
+		log::add('broadlink', 'debug', '[PHP]values : ' .implode (",",  $values));
+		log::add('broadlink', 'debug', '[PHP]option : ' .implode (",", $_options));
+		log::add('broadlink', 'debug', '[PHP]subtype : ' .$this->getSubType());
 		foreach ($values as $value) {
 			$value = explode(':', $value);
 			if (count($value) == 2) {
@@ -536,13 +536,13 @@ class broadlinkCmd extends cmd {
 				$data[trim($value[0])] = $finalValue;
 			}
 			if (count($value) == 1) {
-				log::add('broadlink', 'debug', 'count($value) == 1 => value =>'. implode (",",$value));
+				log::add('broadlink', 'debug', '[PHP]count($value) == 1 => value =>'. implode (",",$value));
 				switch ($this->getSubType()) {
 					case 'color':
 						if (implode (",",  $values) == "rgb")
 							$r=implode (",", $_options);
 							$rgb=substr(ltrim($r, $r[0]),0,6);
-							log::add('broadlink', 'debug', 'rgb : ' .$rgb);
+							log::add('broadlink', 'debug', '[PHP]rgb : ' .$rgb);
 							$data['red']   = hexdec (substr($rgb,0,2));
 							$data['green'] = hexdec (substr($rgb,2,2));
 							$data['blue']  = hexdec (substr($rgb,4,2));
@@ -576,10 +576,10 @@ class broadlinkCmd extends cmd {
 			$value = json_encode(array('apikey' => jeedom::getApiKey('broadlink'), 'cmd' => 'send', 'cmdType' => 'command', 'mac' => $eqLogic->getLogicalId(), 'device' => $data));
 		}
 		$socket = socket_create(AF_INET, SOCK_STREAM, 0);
-		log::add('broadlink', 'info', 'socket_connect');
+		log::add('broadlink', 'info', '[PHP]socket_connect');
 		socket_connect($socket, '127.0.0.1', config::byKey('socketport', 'broadlink'));
 		socket_write($socket, $value, strlen($value));
 		socket_close($socket);
-		log::add('broadlink', 'debug', 'socket_close($socket);');
+		log::add('broadlink', 'debug', '[PHP]socket_close($socket);');
 	}
 }

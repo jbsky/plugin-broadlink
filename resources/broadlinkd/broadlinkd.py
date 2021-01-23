@@ -125,6 +125,8 @@ def read_broadlink():
 				elif globals.KNOWN_DEVICES[device]['type'] == 'lb1':
 					logging.debug('Handling LB1 for ' + globals.KNOWN_DEVICES[device]['name'])
 					result = lb1.read_lb1(globals.KNOWN_DEVICES[device])
+					logging.debug('[PY]'+globals.KNOWN_DEVICES[device]['name'] + ' result b:' + str(result))
+
 				if result :
 					if mac in globals.LAST_STATE and result == globals.LAST_STATE[mac]:
 						continue
@@ -140,7 +142,7 @@ def read_broadlink():
 # ----------------------------------------------------------------------------
 
 def send_broadlink(message):
-	logging.debug('send_broadlink(message) :' + str(message))
+	logging.debug('[PY]send_broadlink(message) :' + str(message))
 # [2021-01-20 20:44:25.191][DEBUG] : Message read from socket: b'{"apikey":"g9BhkrBgb75uATyhHdHruDJY7xLLDwLj","cmd":"send","cmdType":"command","mac":"a043b0b24bd3","device":{"ip":"192.168.4.201","port":"80","type":"lb1","name":"Salon","mac":"a043b0b24bd3"}}'
 
 	result = {}
@@ -157,7 +159,10 @@ def send_broadlink(message):
 			result = rm4.read_rm4(message['device'])
 		elif message['device']['type'] == 'lb1':
 			result = lb1.read_lb1(message['device'])
-		if result :
+		if result:
+			result['type']=message['device']['type']
+			logging.debug('[PY] result :' + str(result))
+
 			if message['device']['mac'] in globals.LAST_STATE and result == globals.LAST_STATE[message['device']['mac']]:
 				return
 			else:
@@ -188,7 +193,10 @@ def send_broadlink(message):
 			globals.JEEDOMCOM.add_changes('devices::'+message['device']['mac'],result)
 	elif message['device']['type'] == 'lb1':
 		result = lb1.send_lb1(message['device'])
+		logging.debug('[PY] result :' + str(result))
+
 		if result:
+			result['type']=message['device']['type']
 			globals.JEEDOMCOM.add_changes('devices::'+message['device']['mac'],result)
 	return
 

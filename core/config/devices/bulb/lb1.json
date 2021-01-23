@@ -13,16 +13,75 @@
 		},
         "commands": [
 			{
-				"name": "Status",
+				"name": "status",
 				"type": "info",
 				"subtype": "binary",
 				"isVisible": 1,
 				"isHistorized": 0,
 				"display": {
 					"generic_type": "LIGHT_STATE"
-                },
+                }
+            },
+            {
+				"name": "brightness",
+				"type": "info",
+				"subtype": "numeric",
+				"isVisible": 1,
+                "isHistorized": 0,
+                "logicalId": "ibrightness",
+                "template": {
+					"dashboard": "light",
+					"mobile": "light"
+				}
 
-				"logicalId": "status"
+            },
+            {
+				"name": "saturation",
+				"type": "info",
+				"subtype": "numeric",
+				"isVisible": 1,
+				"isHistorized": 0,
+				"logicalId": "isaturation"
+            },
+            {
+				"name": "rgb",
+				"type": "info",
+				"subtype": "other",
+				"isVisible": 1,
+				"isHistorized": 0,
+				"logicalId": "irgb"
+            },
+            {
+				"name": "bulb_colormode",
+				"type": "info",
+				"subtype": "numeric",
+				"isVisible": 1,
+				"isHistorized": 0,
+				"logicalId": "ibulb_colormode"
+            },
+            {
+				"name": "transitionduration",
+				"type": "info",
+				"subtype": "numeric",
+				"isVisible": 1,
+				"isHistorized": 0,
+				"logicalId": "itransitionduration"
+            },
+            {
+				"name": "hue",
+				"type": "info",
+				"subtype": "numeric",
+				"isVisible": 1,
+				"isHistorized": 0,
+				"logicalId": "ihue"
+            },
+            {
+				"name": "maxworktime",
+				"type": "info",
+				"subtype": "numeric",
+				"isVisible": 1,
+				"isHistorized": 0,
+				"logicalId": "imaxworktime"
 			},
             {
                 "name": "Allumer",

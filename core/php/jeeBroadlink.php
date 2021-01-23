@@ -31,6 +31,9 @@ if (!is_array($result)) {
 	die();
 }
 
+log::add('broadlink', 'debug','[PHP] jeeBroadlink POST result: ' . json_encode($result));
+// [2021-01-23 22:18:04][DEBUG] : [PHP] jeeBroadlink POST result: {"devices":{"24dfa74f87b2":{"mac":"24dfa74f87b2","temperature":0,"humidity":0},"a043b0b24bd3":"{'red': 255, 'blue': 255, 'green': 255, 'pwr': 1, 'brightness': 42, 'colortemp': 2700, 'hue': 0, 'saturation': 0, 'transitionduration': 1500, 'maxworktime': 0, 'bulb_colormode': 1, 'bulb_scenes': '[\"@01686464,0,0,0\", \"#ffffff,10,0,#000000,190,0,0\", \"2700+100,0,0,0\", \"#ff0000,500,2500,#00FF00,500,2500,#0000FF,500,2500,0\", \"@01686464,100,2400,@01686401,100,2400,0\", \"@01686464,100,2400,@01686401,100,2400,@005a6464,100,2400,@005a6401,100,2400,0\", \"@01686464,10,0,@00000000,190,0,0\", \"@01686464,200,0,@005a6464,200,0,0\", \"#000000,1000,0,#0080FF,1000,5000,0\", \"#000000,1000,0,#00FF00,1,3000,0\", \"#0000FF,1000,1000,#00FF00,1000,1000,#000000,1,1000,#FF0000,0,0,0\"]', 'bulb_scene': '#0000FF,1000,1000,#00FF00,1000,1000,#000000,1,1000,#FF0000,0,0,0', 'bulb_sceneidx': 255}"}}
+
 if (isset($result['learn_mode'])) {
 	if ($result['learn_mode'] == 1) {
 		config::save('include_mode', 1, 'broadlink');
@@ -116,17 +119,27 @@ if (isset($result['devices'])) {
 			event::add('broadlink::includeCommand', $broadlink->getId());
 			continue;
 		}
+		log::add('broadlink', 'debug','[PHP] datas: ' . json_encode($datas));
+
 		foreach ($broadlink->getCmd('info') as $cmd) {
 			$logicalId = $cmd->getConfiguration('logicalid');
+			log::add('broadlink', 'debug','[PHP] cmd');
+
 			if ($logicalId == '') {
 				continue;
 			}
+			log::add('broadlink', 'debug','[PHP] logicalId: ' . $logicalId);
+
 			$path = explode('::', $logicalId);
 			$value = $datas;
+
 			foreach ($path as $key) {
+
 				if (!isset($value[$key])) {
 					continue (2);
 				}
+				log::add('broadlink', 'debug','[PHP] key :'.$key." => " .$value[$key]);
+
 				$value = $value[$key];
 				if (!is_array($value) && strpos($value, 'toggle') !== false && $cmd->getSubType() == 'binary') {
 					$value = $cmd->execCmd();
@@ -137,6 +150,8 @@ if (isset($result['devices'])) {
 					$value = ($value != 0) ? 0 : 100;
 					$broadlink->batteryStatus($value);
 				}
+
+
 			}
 			if (!is_array($value)) {
 				$cmd->event($value);
